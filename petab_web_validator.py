@@ -5,7 +5,6 @@ import pandas as pd
 import petab
 
 from app import app
-app.secret_key = 'secret password'
 
 
 def get_petab_problem(sbml_str: str = None,

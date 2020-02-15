@@ -33,7 +33,7 @@ def index():
                                         form.observables_file.data)
         except Exception as e:
             flash(Markup(f'<p> Not valid: </p> {e} '), category='error')
-            return render_template('init.html', form=form)
+            return render_template('index.html', form=form)
 
         try:
             res = lint_problem(petab_problem)
@@ -50,7 +50,7 @@ def index():
 
         if os.path.isfile(fn):
             os.remove(fn)
-    return render_template('init.html', form=form)
+    return render_template('index.html', form=form)
 
 
 def get_problem(sbml_file, condition_file, measurement_file, parameters_file,
