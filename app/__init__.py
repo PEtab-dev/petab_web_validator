@@ -6,5 +6,5 @@ bootstrap = Bootstrap(app)
 
 app.secret_key = 'secret password'
 
-from app import routes
+from app import routes, errors
 
