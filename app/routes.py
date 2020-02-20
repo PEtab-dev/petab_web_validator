@@ -19,37 +19,35 @@ from app.forms import PEtabForm
 def index():
     form = PEtabForm()
     if form.validate_on_submit():
+        with tempfile.TemporaryDirectory(dir=f"{app.root_path}") as tmpdirname:
+            fn = tempfile.mktemp(".log", dir=f"{tmpdirname}")
+            file_handler = logging.FileHandler(fn, mode='w')
+            file_handler.setLevel('DEBUG')
+            petab.lint.logger.addHandler(file_handler)
 
-        fn = tempfile.mktemp(".log", dir="app/tmp")
-        file_handler = logging.FileHandler(fn, mode='w')
-        file_handler.setLevel('DEBUG')
-        petab.lint.logger.addHandler(file_handler)
+            try:
+                petab_problem = get_problem(form.sbml_file.data,
+                                            form.condition_file.data,
+                                            form.measurement_file.data,
+                                            form.parameters_file.data,
+                                            form.observables_file.data)
+            except Exception as e:
+                flash(Markup(f'<p> Not valid: </p> {e} '), category='error')
+                return render_template('index.html', form=form)
 
-        try:
-            petab_problem = get_problem(form.sbml_file.data,
-                                        form.condition_file.data,
-                                        form.measurement_file.data,
-                                        form.parameters_file.data,
-                                        form.observables_file.data)
-        except Exception as e:
-            flash(Markup(f'<p> Not valid: </p> {e} '), category='error')
-            return render_template('index.html', form=form)
+            try:
+                res = lint_problem(petab_problem)
+                if res:
+                    with open(fn) as f:
+                        error_log = f.read()
+                        p = re.compile('\n')
+                        error_log = p.sub('<br>', error_log)
+                    flash(Markup(f'<p> Not valid: </p> <p> {error_log} </p>'), category='error')
+                else:
+                    flash(Markup(f'<p> Great! Your model is valid. </p>'), category='success')
+            except Exception as e:
+                flash(Markup(f'<p> Error: </p> {e} '), category='error')
 
-        try:
-            res = lint_problem(petab_problem)
-            if res:
-                with open(fn) as f:
-                    error_log = f.read()
-                    p = re.compile('\n')
-                    error_log = p.sub('<br>', error_log)
-                flash(Markup(f'<p> Not valid: </p> <p> {error_log} </p>'), category='error')
-            else:
-                flash(Markup(f'<p> Great! Your model is valid. </p>'), category='success')
-        except Exception as e:
-            flash(Markup(f'<p> Error: </p> {e} '), category='error')
-
-        if os.path.isfile(fn):
-            os.remove(fn)
     return render_template('index.html', form=form)
 
 
