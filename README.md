@@ -3,7 +3,7 @@
 [PEtab](https://github.com/petab-dev/petab) validation web service.
 
 
-# Install and run locally
+## Install and run locally
 
 This web service uses the python web applications framework
 [flask](https://flask.palletsprojects.com/en/1.1.x/).
