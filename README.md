@@ -15,10 +15,10 @@ can all be installed using `pip install`.
 To run the service locally, in the command line clone the project folder, e.g.
 via
 
-  git clone https://github.com/petab-dev/petab_web_validator
-  cd petab_web_validator
+    git clone https://github.com/petab-dev/petab_web_validator
+    cd petab_web_validator
 
 and then
 
-  export FLASK_APP=app
-  flask run
+    export FLASK_APP=app
+    flask run
